@@ -1,44 +1,46 @@
-# Arduino Güneş Takip Sistemi (Solar Tracker)
+# Arduino Solar Tracker
 
-Bu proje, iki adet LDR (Işık Bağımlı Direnç) sensörü ve bir servo motor kullanarak güneş ışığının veya ortamdaki en parlak ışık kaynağının yönünü otomatik olarak takip eden sistemin kaynak kodudur.
+## About
+This project implements a single-axis solar tracking system using an Arduino microcontroller. By utilizing Light Dependent Resistors (LDRs) to measure ambient light intensity, the system calculates the optimal angle and drives a servo motor to orient a panel towards the brightest light source. It serves as a practical example of sensor data processing, actuator control, and hysteresis implementation in embedded systems.
 
-## Özellikler
+## Features
 
-* **Otomatik Yönlendirme:** Sağ ve sol LDR'ler arasındaki ışık şiddeti farkını hesaplayarak paneli/motoru ışığın en yoğun olduğu yöne çevirir.
-* **Histerezis (Tolerans) Kontrolü:** Ufak ışık değişimlerinde motorun sürekli titremesini (kararsızlık durumunu) önlemek için bir eşik değeri (`tolerans`) kullanır.
-* **Mekanik Sınırlar:** Servo motorun fiziksel olarak zorlanmasını engellemek için yazılımsal olarak minimum (20°) ve maksimum (150°) hareket sınırları (`sinirMin`, `sinirMax`) belirlenmiştir.
+* **Automatic Orientation:** Calculates the light intensity difference between the right and left LDRs to rotate the motor towards the most intense light source.
+* **Hysteresis Control:** Utilizes a threshold value (`tolerans`) to prevent the motor from constantly jittering or oscillating due to minor light fluctuations.
+* **Mechanical Constraints:** Implements software-defined minimum (20°) and maximum (150°) movement limits (`sinirMin`, `sinirMax`) to prevent physical strain on the servo motor.
 
-## Donanım Gereksinimleri
+## Hardware Requirements
 
-* 1x Arduino Uno (veya Nano/Mega)
-* 1x Servo Motor (Örn: SG90 veya MG996R)
-* 2x LDR (Işık Sensörü)
-* 2x 10kΩ Direnç (LDR'ler için pull-down direnci olarak)
-* Breadboard ve Jumper Kablolar
+* 1x Arduino Uno (or Nano/Mega)
+* 1x Servo Motor (e.g., SG90 or MG996R)
+* 2x LDR (Photoresistor)
+* 2x 10kΩ Resistor (as pull-down resistors for the LDRs)
+* Breadboard and Jumper Wires
 
 
 
-## Pin Bağlantıları
+## Pin Connections
 
-| Bileşen / Pin | Arduino Bağlantısı |
+| Component / Pin | Arduino Connection |
 | :--- | :--- |
-| **Servo Motor Sinyal** | Dijital Pin `9` |
-| **Sağ LDR (Doğu)** | Analog Pin `A0` |
-| **Sol LDR (Batı)** | Analog Pin `A1` |
+| **Servo Motor Signal** | Digital Pin `9` |
+| **Right LDR (East)** | Analog Pin `A0` |
+| **Left LDR (West)** | Analog Pin `A1` |
 
-*(Not: LDR'lerin bir bacağı 5V'a, diğer bacağı ise hem Analog okuma pinine hem de 10kΩ direnç üzerinden GND'ye bağlanmalıdır.)*
+*(Note: Connect one leg of each LDR to 5V, and the other leg to the Analog pin as well as to GND through a 10kΩ resistor.)*
 
-## Kurulum ve Kullanım
+## Installation and Usage
 
-1. Bu depoyu bilgisayarınıza klonlayın veya `.ino` uzantılı dosyayı indirin.
-2. Kod dosyasını **Arduino IDE** ile açın. (Kodun kullandığı `<Servo.h>` kütüphanesi Arduino IDE ile dahili olarak gelir, ekstra yükleme gerektirmez.)
-3. Devre bağlantılarınızı yukarıdaki tabloya göre tamamlayın.
-4. Arduino'nuzu bilgisayara bağlayın, doğru portu ve kartı seçip kodu yükleyin.
-5. Hata ayıklama veya kalibrasyon için **Seri Port Ekranını** (`9600 baud` hızında) açarak sağ ve sol sensör değerlerini canlı olarak izleyebilirsiniz.
+1. Clone this repository to your local machine or download the `.ino` file.
+2. Open the code using the **Arduino IDE**. (The required `<Servo.h>` library is built into the IDE, so no additional installation is needed).
+3. Complete the circuit wiring according to the pin connection table above.
+4. Connect your Arduino board to your computer via USB.
+5. Select the appropriate Board and Port from the Tools menu, then compile and upload the code.
+6. Open the **Serial Monitor** (set to `9600 baud`) to view real-time sensor readings for debugging and calibration purposes.
 
-## Kalibrasyon ve İnce Ayar
+## Calibration and Tuning
 
-Kullanacağınız ortamın ışık şiddetine göre kod içindeki şu değişkenleri optimize edebilirsiniz:
+You can optimize the following variables in the code based on your specific ambient lighting conditions:
 
-* `tolerans = 15;`: Motor gereksiz yere çok fazla hareket ediyor veya titriyorsa bu değeri yükseltin. Çok geç tepki veriyorsa düşürün.
-* `hareketHizi = 50;`: Her bir derecelik adım atıldığında motorun bekleme süresidir (milisaniye cinsinden). Hareketin akıcılığını ayarlamak için değiştirebilirsiniz.
+* `tolerans = 15;`: Increase this threshold value if the motor jitters or makes unnecessary micro-movements. Decrease it if the system responds too slowly to light changes.
+* `hareketHizi = 50;`: The delay time (in milliseconds) after each 1-degree step of the motor. Adjust this to change the smoothness and speed of the movement.
